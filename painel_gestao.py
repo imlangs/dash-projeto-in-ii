@@ -80,7 +80,17 @@ elif authentication_status:
 
         col_filtro_ano, col_filtro_mes = st.columns(2)
         ano_selecionado = col_filtro_ano.selectbox("Ano", anos_disponiveis, index=0)
-        mes_selecionado = col_filtro_mes.selectbox("Mês", meses_disponiveis, index=len(meses_disponiveis)-1, format_func=lambda m: calendar.month_name[m])
+        
+        import locale
+        locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+
+        mes_selecionado = col_filtro_mes.selectbox(
+            "Mês", 
+            meses_disponiveis, 
+            index=len(meses_disponiveis)-1,
+            format_func=lambda m: datetime(1900, m, 1).strftime('%B').capitalize()
+)
+
 
         df_filtrado = df[(df["Ano"] == ano_selecionado) & (df["Mês"] == mes_selecionado)]
         st.title("Painel de Indicadores Estratégicos")
@@ -127,7 +137,8 @@ elif authentication_status:
                     name="Clientes Novos",
                     marker_color="#FFB84D",
                     text=pivot_clientes["Clientes Novos"],
-                    textposition="auto"
+                    textposition="auto",
+                    textfont=dict(size=14)
                 ), secondary_y=False)
 
                 fig_evolucao.add_trace(go.Bar(
@@ -136,7 +147,8 @@ elif authentication_status:
                     name="Clientes Ativos",
                     marker_color="#FFD700",
                     text=pivot_clientes["Clientes Ativos"],
-                    textposition="auto"
+                    textposition="auto",
+                    textfont=dict(size=14),
                 ), secondary_y=False)
 
                 fig_evolucao.add_trace(go.Scatter(
@@ -146,7 +158,8 @@ elif authentication_status:
                     mode="lines+markers",
                     line=dict(color="#FF6F00", width=3),
                     text=[f"{val:.2f}%" for val in pivot_clientes["Churn Rate (%)"]],
-                    textposition="top center"
+                    textposition="top center",
+                    textfont=dict(size=14)
                 ), secondary_y=True)
 
                 fig_evolucao.update_layout(
